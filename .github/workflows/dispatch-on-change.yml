@@ -1,20 +1,26 @@
-    name: '🚀 Dispatch on Change'
+name: '🚀 Dispatch on Change'
 
-    on:
-      push:
-        branches:
-          - master
+on:
+  push:
+    branches:
+      - master
 
-    jobs:
-      dispatch:
-        runs-on: ubuntu-latest
-        steps:
-          - name: 'Send repository_dispatch to source-repo'
-            uses: peter-evans/repository-dispatch@v3
-            with:
-              # This PAT needs repo scope to trigger workflows
-              token: ${{ secrets.PAT }}
-              repository: melscoop-test/source-repo
-              event-type: config-updated
-              client-payload: '{"sha": "${{ github.sha }}"}'
-    
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Generate a token from the GitHub App'
+        id: generate_token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: 'Send repository_dispatch to source-repo'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          # Use the app-generated token, which has cross-repo permissions
+          token: ${{ steps.generate_token.outputs.token }}
+          repository: melscoop-test/source-repo
+          event-type: config-updated
+          client-payload: '{"sha": "${{ github.sha }}"}'
