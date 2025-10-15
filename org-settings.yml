@@ -1,0 +1,11 @@
+# org-settings.yml
+# This is the single source of truth for repository settings.
+
+# The required version of Ruby all apps must use.
+required_ruby_version: "3.2.2"
+
+# A list of gems that are not allowed in any project for security reasons.
+disallowed_gems:
+  - "pry-byebug"
+  - "left-pad" # Just for demonstration
+    
