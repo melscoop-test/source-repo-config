@@ -1,0 +1,20 @@
+    name: '🚀 Dispatch on Change'
+
+    on:
+      push:
+        branches:
+          - master
+
+    jobs:
+      dispatch:
+        runs-on: ubuntu-latest
+        steps:
+          - name: 'Send repository_dispatch to source-repo'
+            uses: peter-evans/repository-dispatch@v3
+            with:
+              # This PAT needs repo scope to trigger workflows
+              token: ${{ secrets.PAT }}
+              repository: melscoop-test/source-repo
+              event-type: config-updated
+              client-payload: '{"sha": "${{ github.sha }}"}'
+    
